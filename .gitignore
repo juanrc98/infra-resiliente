@@ -1,0 +1,13 @@
+# Sistema
+Thumbs.db
+.DS_Store
+
+# Temporales y borradores
+*.tmp
+borrador*
+
+# Secretos: nunca subir
+*.key
+*.pem
+secretos*
+credenciales*
