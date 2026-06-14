@@ -1,57 +1,59 @@
 # Fase 1 · Base — Proxmox VE
 
-> Estado: 🟡 En progreso · Fecha: ___
+> Estado: 🟢 Casi completa · Fecha: 14/06/2026
 
 ## Objetivo
 
-Tener el hipervisor funcionando, con almacenamiento sólido y la red preparada. Es el suelo sobre el que se construye todo el laboratorio.
+Tener el hipervisor funcionando, con almacenamiento sólido y la red preparada. Es el suelo sobre el que se apoya todo lo demás: si esta capa está mal, arrastro el error a las cuatro fases siguientes. Así que aquí no corro: prefiero dejar la base firme y entendida.
 
-## Entorno de partida
+## Mi entorno de partida
 
-- **Equipo:** _(modelo, CPU, RAM, disco)_
-- **Tipo de montaje:** Proxmox VE sobre VMware Workstation (virtualización anidada)
-- **Recursos asignados a la VM:** _(RAM, vCPUs, disco)_
-- **Versión de Proxmox VE:** ___
+Monto el laboratorio en mi portátil de trabajo (IdeaPad Slim 3, i5-12450H, 16 GB de RAM). Como Proxmox se instala *bare-metal* y no voy a borrar el equipo, lo levanto **dentro de una VM en VMware Workstation** (virtualización anidada). No es lo ideal en rendimiento, pero para aprender, montar el flujo completo y documentarlo, sirve de sobra.
 
-## Pasos realizados
+- **Versión:** Proxmox VE 9.2.2
+- **Recursos de la VM:** 8 GB de RAM, 4 vCPUs (con virtualización anidada activada), 100 GB de disco
+- **Red de la VM:** inicialmente en modo *bridged*
 
-### 1. Instalación de Proxmox VE
-_(Cómo arrancó el instalador, opciones elegidas.)_
+## Lo que hice, paso a paso
 
-- Sistema de ficheros elegido: **ext4 (LVM)** — _motivo: ahorrar RAM en el montaje anidado; ZFS queda para hardware dedicado._
-- IP asignada: ___
-- Hostname: ___
+### 1. Instalación
 
-📷 _Captura: `capturas/01-proxmox/01-instalacion.png`_
+Arranqué el instalador gráfico y, cuando llegó la pantalla del disco, tomé la primera decisión con criterio: **elegí ext4 (LVM) en vez de ZFS**. ZFS es estupendo, pero se come varios GB de RAM en caché, y en un montaje anidado con 16 GB esos GB los necesito para las máquinas que voy a levantar. ZFS lo dejo para el día que monte esto sobre hardware dedicado.
 
-### 2. Acceso al panel web
-Panel disponible en `https://IP:8006` (usuario `root`).
+Configuré la red para que encajara con la de mi casa: IP `192.168.1.50/24`, gateway `192.168.1.1`, hostname `pve`.
 
-📷 _Captura: `capturas/01-proxmox/02-panel-web.png`_
+📷 `capturas/01-proxmox/01-resumen-instalacion.png`
 
-### 3. Puesta a punto post-instalación
-_(Quitar aviso de suscripción, activar repositorio no-subscription, actualizar.)_
+### 2. Primer acceso al panel
 
-### 4. Red y VLANs
-_(Configuración de la red, SDN/VLANs si aplica.)_
+Tras instalar, entré al panel web en `https://192.168.1.50:8006` con el usuario `root`. El aviso de "no es seguro" del navegador es el certificado autofirmado: normal en un lab.
 
-### 5. Primer contenedor / VM
-_(Creación del primer LXC o VM de prueba.)_
+📷 `capturas/01-proxmox/02-login-panel.png`
 
-📷 _Captura: `capturas/01-proxmox/03-primer-contenedor.png`_
+### 3. Repositorios y actualización
 
-## Problemas encontrados y cómo los resolví
+Proxmox viene apuntando por defecto al repositorio *enterprise* (de pago), así que el primer `apt update` falla. La solución es usar el repositorio gratuito: **desactivé el `pve-enterprise` y activé el `pve-no-subscription`**. La suscripción de pago en Proxmox no desbloquea funciones, solo da soporte y el repo enterprise; con el gratuito tengo el sistema completo.
 
-_(Aquí lo importante: los tropiezos reales y la solución. Esto es lo que más valor aporta al write-up.)_
+Con los repositorios bien puestos, lancé la actualización del sistema.
 
--
+📷 `capturas/01-proxmox/03-repositorios.png`
+📷 `capturas/01-proxmox/04-actualizacion.png`
 
-## Lo que aprendí
+## Problemas que me encontré (y cómo los resolví)
 
-_(2-3 ideas clave que te llevas de esta fase.)_
+Esta es, para mí, la parte que más vale de documentar: lo que no sale a la primera.
 
--
+- **La VM volvía al instalador en bucle.** Tras instalar y reiniciar, en vez de arrancar Proxmox me devolvía a la pantalla de instalación. El motivo: la ISO seguía conectada al CD/DVD virtual y tenía prioridad de arranque. **Solución:** desconectar la ISO de la unidad en VMware. Arrancó del disco a la primera.
+
+- **Las descargas iban lentísimas.** El `apt upgrade` se arrastraba a velocidades muy bajas. El culpable era la **red en modo bridged sobre Wi-Fi**, que para tráfico pesado rinde mal. El panel cargaba bien, pero descargar cientos de MB se eternizaba. **Solución:** migrar la red de la VM a **NAT**, que va por la pila de red de VMware y rinde mucho mejor para este tipo de descargas. (Aprendizaje: el bridged "como en una red real" suena bien, pero sobre Wi-Fi pasa factura.)
+
+## Lo que me llevo de esta fase
+
+- La diferencia real entre un hipervisor de **tipo 1** (Proxmox, sobre el hardware) y los de **tipo 2** que usaba en el ciclo (VirtualBox, VMware): no es "una app para virtualizar", es el sistema operativo del servidor.
+- Por qué **ext4 frente a ZFS** según el contexto: la mejor herramienta depende de los recursos que tienes, no de cuál es "más potente".
+- El modelo de **repositorios de Proxmox** (gratuito vs enterprise) y que el gratuito es completo.
+- Que en infraestructura, **la base bien hecha es lo que sostiene todo lo demás**. Sin un hipervisor sólido, ni la monitorización ni el backup tienen sentido.
 
 ## Siguiente paso
 
-Fase 2 · Servicios e identidad (OPNsense, Active Directory, Docker).
+Migrar la red a NAT, crear mi primer contenedor LXC para cerrar la fase, y empezar la **Fase 2 · Servicios e identidad**.
