@@ -19,13 +19,13 @@ Monto el laboratorio en mi portátil (IdeaPad Slim 3, i5-12450H, 16 GB de RAM). 
 
 Arranqué el instalador gráfico y, cuando llegó la pantalla del disco, tomé la primera decisión con criterio: **elegí ext4 (LVM) en vez de ZFS**. ZFS es estupendo, pero se come varios GB de RAM en caché, y en un montaje anidado con 16 GB esos GB los necesito para las máquinas que voy a levantar. ZFS lo dejo para el día que monte esto sobre hardware dedicado.
 
-📷 `capturas/01-proxmox/01-resumen-instalacion.png`
+![Resumen de instalación de Proxmox](../capturas/01-proxmox/01-resumen-instalacion.png)
 
 ### 2. Primer acceso al panel
 
 Tras instalar, entré al panel web con el usuario `root`. El aviso de "no es seguro" del navegador es el certificado autofirmado: normal en un lab.
 
-📷 `capturas/01-proxmox/02-login-panel.png`
+![Panel de login de Proxmox](../capturas/01-proxmox/02-login-panel.png)
 
 ### 3. Repositorios y actualización
 
@@ -33,14 +33,15 @@ Proxmox viene apuntando por defecto al repositorio *enterprise* (de pago), así 
 
 Con los repositorios bien puestos, actualicé el sistema (quedó en la versión 9.2.3) y reinicié el nodo.
 
-📷 `capturas/01-proxmox/03-repositorios.png`
-📷 `capturas/01-proxmox/04-actualizacion.png`
+![Repositorios APT configurados](../capturas/01-proxmox/03-repositorios.png)
+
+![Actualización del sistema](../capturas/01-proxmox/04-actualizacion.png)
 
 ### 4. Primer contenedor LXC
 
 Para cerrar la fase, descargué una plantilla **Debian 12 standard** y creé mi primer contenedor LXC a partir de ella (1 vCPU, 512 MB de RAM, red en DHCP). Arrancó a la primera y pude entrar a su consola como `root`. Tener algo corriendo encima es lo que convierte "instalé Proxmox" en "tengo un hipervisor operativo".
 
-📷 `capturas/01-proxmox/05-primer-contenedor.png`
+![Primer contenedor LXC en marcha](../capturas/01-proxmox/05-primer-contenedor.png)
 
 ## Problemas que me encontré (y cómo los resolví)
 
