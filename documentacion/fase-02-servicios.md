@@ -28,15 +28,17 @@ OPNsense es el cerebro de la red: define la estructura (LAN/WAN, segmentación) 
   - **LAN** → red privada VMnet1 (host-only), la red interna del lab.
 - Instalación con UFS (más ligero que ZFS para el lab).
 
-📷 `capturas/02-servicios/01-opnsense-instalador.png`
-📷 `capturas/02-servicios/02-opnsense-interfaces.png`
+![Instalador de OPNsense](../capturas/02-servicios/01-opnsense-instalador.png)
+
+![Asignación de interfaces WAN/LAN](../capturas/02-servicios/02-opnsense-interfaces.png)
 
 ### Configuración
 
 Pasé el asistente inicial (DNS, zona horaria Europe/Madrid, contraseña de root) y dejé OPNsense operativo, administrable desde su panel web.
 
-📷 `capturas/02-servicios/03-opnsense-panel-web.png`
-📷 `capturas/02-servicios/04-opnsense-dashboard.png`
+![Panel web de OPNsense](../capturas/02-servicios/03-opnsense-panel-web.png)
+
+![Dashboard de OPNsense](../capturas/02-servicios/04-opnsense-dashboard.png)
 
 ### Problemas que me encontré (y cómo los resolví)
 
